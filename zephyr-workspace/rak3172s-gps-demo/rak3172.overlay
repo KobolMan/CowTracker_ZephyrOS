@@ -1,0 +1,54 @@
+/*
+ * Dual UART setup:
+ * USART1 (PB6/PB7): PC Console at 115200 baud
+ * USART2 (PA2/PA3): GPS Module at 115200 baud
+ */
+
+/ {
+    chosen {
+        zephyr,console = &usart1;
+        zephyr,shell-uart = &usart1;
+    };
+    
+    aliases {
+        gps-uart = &usart2;
+    };
+};
+
+/* USART1 pinctrl for console (PB6/PB7) */
+&pinctrl {
+    usart1_tx_pb6: usart1_tx_pb6 {
+        pinmux = <STM32_PINMUX('B', 6, AF7)>;
+    };
+    
+    usart1_rx_pb7: usart1_rx_pb7 {
+        pinmux = <STM32_PINMUX('B', 7, AF7)>;
+        bias-pull-up;
+    };
+    
+    /* USART2 pinctrl for GPS (PA2/PA3) */
+    usart2_tx_pa2: usart2_tx_pa2 {
+        pinmux = <STM32_PINMUX('A', 2, AF7)>;
+    };
+    
+    usart2_rx_pa3: usart2_rx_pa3 {
+        pinmux = <STM32_PINMUX('A', 3, AF7)>;
+        bias-pull-up;
+    };
+};
+
+/* USART1 for console */
+&usart1 {
+    status = "okay";
+    current-speed = <115200>;
+    pinctrl-0 = <&usart1_tx_pb6 &usart1_rx_pb7>;
+    pinctrl-names = "default";
+};
+
+/* USART2 for GPS */
+&usart2 {
+    status = "okay";
+    current-speed = <115200>;
+    pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
+    pinctrl-names = "default";
+};
